@@ -1,6 +1,7 @@
 import logging
 import sys
 import socket
+import os
 
 from flask import Flask, jsonify
 from werkzeug.contrib.fixers import ProxyFix
@@ -33,4 +34,8 @@ if __name__ == '__main__':
                            "file and replace PUT_HERE_* values with real "
                            "ones")
 
-    app.run(debug=True if Config().loglevel == 'DEBUG' else False, host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))
+
+    app.run(debug=True if Config().loglevel == 'DEBUG' else False,
+            host='0.0.0.0',
+            port=port)
