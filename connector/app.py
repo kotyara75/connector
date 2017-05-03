@@ -21,7 +21,7 @@ app.register_blueprint(api_v1, url_prefix='/v1')
 
 @app.route('/')
 def home():
-    return jsonify({'service': 'fallball_connector', 'host': socket.gethostname()})
+    return jsonify({'service': 'box_connector', 'host': socket.gethostname()})
 
 
 if __name__ == '__main__':

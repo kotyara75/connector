@@ -16,14 +16,14 @@ with codecs.open(join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 install_reqs = parse_requirements(join(here, 'requirements.txt'), session=False)
-reqs = [str(ir.req) for ir in install_reqs]
-
+# reqs = [str(ir.req) for ir in install_reqs]
+reqs = install_reqs
 
 setup(
-    name='fallball-connector',
+    name='box-connector',
     version=PACKAGE_VERSION,
-    author='APS Lite team',
-    author_email='apslite@odin.com',
+    author='APAC PS team',
+    author_email='alinovskiy@odin.com',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     setup_requires=['nose>=1.0'],

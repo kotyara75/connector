@@ -4,20 +4,13 @@ from flask import g
 
 from flask_restful import abort, reqparse
 
-from connector.fbclient.reseller import Reseller
+from connector.client.reseller import Reseller
 
 from . import ConnectorResource, Memoize, parameter_validator
 
 env = pkg_resources.Environment()
-res = env._distmap.get('fallball-connector', [None])[0]
+res = env._distmap.get('box-connector', [None])[0]
 version = res.version if res else ''
-
-
-@Memoize
-def get_reseller_name(reseller_id):
-    res = [r for r in Reseller.all() if r.rid == reseller_id]
-    return None if not res else res[0].name
-
 
 class HealthCheck(ConnectorResource):
     def get(self):
@@ -33,15 +26,15 @@ class ApplicationList(ConnectorResource):
         parser.add_argument('aps', dest='aps_id', type=parameter_validator('id'),
                             required=True, help='No APS id specified')
         args = parser.parse_args()
-        g.reseller.create()
+#        g.reseller.create()
         return {'aps': {'type': args.aps_type, 'id': args.aps_id}}, 201
 
 
 class Application(ConnectorResource):
     def delete(self, app_id):
-        if g.reseller.reseller_name != app_id:
-            abort(403)
-        g.reseller.delete()
+#        if g.reseller.reseller_name != app_id:
+#            abort(403)
+#        g.reseller.delete()
         return {}, 204
 
 

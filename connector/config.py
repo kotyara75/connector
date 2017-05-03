@@ -4,8 +4,11 @@ import os
 
 def check_configuration(config):
     for item in (
-        'fallball_service_url',
-        'fallball_service_authorization_token',
+        'box_baseurl',
+        'box_oauth_baseurl',
+        'box_reseller_client_id',
+        'box_reseller_client_secret',
+        'box_reseller_id',
         'oauth_key',
         'oauth_signature',
     ):
@@ -18,19 +21,17 @@ def check_configuration(config):
 class Config(object):
     conf_file = os.environ.get('CONFIG_FILE', './config.json')
     loglevel = None
-    diskspace_resource = None
-    default_user_limit = None
-    gold_user_limit = None
-    devices_resource = None
     users_resource = None
-    gold_users_resource = None
-    fallball_service_url = None
-    fallball_service_authorization_token = None
+    box_baseurl = None
+    box_oauth_baseurl = None
+    box_reseller_client_id = None
+    box_reseller_client_secret = None
+    box_reseller_id = None
     oauth_key = None
     oauth_signature = None
 
     def __init__(self):
-        if not Config.diskspace_resource:
+        if not Config.users_resource:
             self.load()
 
     @staticmethod
@@ -40,18 +41,15 @@ class Config(object):
 
         with open(Config.conf_file, 'r') as c:
             config = json.load(c)
-            Config.default_user_limit = config.get('default_user_limit', 10)
-            Config.gold_user_limit = config.get('gold_user_limit', 15)
-            Config.gold_users_resource = config.get('gold_users_resource', 'GOLD_USERS')
             Config.loglevel = config.get('loglevel', 'DEBUG')
 
             try:
-                Config.diskspace_resource = config['diskspace_resource']
                 Config.users_resource = config['users_resource']
-                Config.devices_resource = config['devices_resource']
-                Config.fallball_service_url = config['fallball_service_url']
-                Config.fallball_service_authorization_token = \
-                    config['fallball_service_authorization_token']
+                Config.box_oauth_baseurl = config['box_oauth_baseurl']
+                Config.box_baseurl = config['box_baseurl']
+                Config.box_reseller_client_id = config['box_reseller_client_id']
+                Config.box_reseller_client_secret = config['box_reseller_client_secret']
+                Config.box_reseller_id = config['box_reseller_id']
                 Config.oauth_key = config['oauth_key']
                 Config.oauth_signature = config['oauth_signature']
             except KeyError as e:

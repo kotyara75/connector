@@ -61,7 +61,7 @@ class Reseller(object):
         return result
 
     def refresh(self):
-        api = self.api(config.fallball_service_authorization_token)
+        api = self.api(config.box_oauth_baseurl)
         try:
             result = api.resellers(self.name).get()
             r = ResellerSchema().load(result).data

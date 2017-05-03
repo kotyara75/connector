@@ -1,13 +1,11 @@
 {
     "loglevel": "DEBUG",
-    "fallball_service_url": "PUT_HERE_FALLBALL_SERVICE_URI",
-    "fallball_service_authorization_token": "PUT_HERE_FALLBALL_SERVICE_AUTHORIZATION_TOKEN",
-    "oauth_key": "PUT_HERE_OAUTH_KEY",
-    "oauth_signature": "PUT_HERE_OAUTH_SIGNATURE",
-    "diskspace_resource": "DISKSPACE",
+    "oauth_key": "cool-sasha-test-app-v1-bae060bdd",
+    "oauth_signature": "0c6c4cf1690c4561a97e4f8f679de90d",
     "users_resource": "USERS",
-    "gold_users_resource": "GOLD_USERS",
-    "devices_resource": "DEVICES",
-    "default_user_limit": 10,
-    "gold_user_limit": 15
+    "box_baseurl": "https://api.box.com/2.0/",
+    "box_oauth_baseurl": "https://api.box.com/oauth2/",
+    "box_reseller_client_id": "jpbgzrbh7vr614fea2q8wxzsfd35eyls",
+    "box_reseller_client_secret": "xsOb8UwmLwKy323K7X6vyDCmJj9sYLII",
+    "box_reseller_id": "2538"
 }

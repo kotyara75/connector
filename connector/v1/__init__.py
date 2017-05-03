@@ -10,15 +10,14 @@ from faker import Faker
 from connector.config import Config
 from connector.utils import log_request, log_response
 from connector.validator import check_oauth_signature, get_client_key
-from connector.fbclient.reseller import Reseller
+from connector.client.reseller import Reseller
 
-from resources import urlify
-from resources.application import (Application, ApplicationList, ApplicationTenantDelete,
-                                   ApplicationTenantNew, ApplicationUpgrade, HealthCheck,
-                                   get_reseller_name)
-from resources.tenant import (Tenant, TenantAdminLogin, TenantDisable, TenantEnable,
+from .resources import urlify
+from .resources.application import (Application, ApplicationList, ApplicationTenantDelete,
+                                   ApplicationTenantNew, ApplicationUpgrade, HealthCheck)
+from .resources.tenant import (Tenant, TenantAdminLogin, TenantDisable, TenantEnable,
                               TenantList, TenantUserCreated, TenantUserRemoved)
-from resources.user import User, UserList, UserLogin
+from .resources.user import User, UserList, UserLogin
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -40,10 +39,10 @@ def allow_public_endpoints_only():
 def set_name_for_reseller(reseller_id):
     if not reseller_id:
         return None
-    if g.endpoint == ApplicationList.__name__.lower():
-        return urlify(fake.bs())
-    return get_reseller_name(reseller_id)
-
+    return "a-box-reseller"
+#    if g.endpoint == ApplicationList.__name__.lower():
+#        return urlify(fake.bs())
+#    return get_reseller_name(reseller_id)
 
 def get_oauth():
     client_key = get_client_key(request)
@@ -70,7 +69,7 @@ def before_request():
 
     reseller_info = get_reseller_info()
     g.reseller_name = reseller_info.name
-    g.company_name = 'N/A'
+    g.enterprise_id = 'N/A'
 
     log_request(request)
 
@@ -83,18 +82,16 @@ def before_request():
 
     g.auth = reseller_info.auth
 
-    g.reseller = Reseller(reseller_info.name, reseller_info.id, None)
+    g.reseller = Reseller(None)
     g.reseller.refresh()
 
-    if not g.reseller.token and not reseller_info.is_new:
+    if not g.reseller.token:
         abort(403)
-
 
 @api_bp.after_request
 def after_request(response):
     log_response(response)
     return response
-
 
 resource_routes = {
     '/': HealthCheck,
@@ -109,12 +106,12 @@ resource_routes = {
     '/tenant/<tenant_id>/disable': TenantDisable,
     '/tenant/<tenant_id>/enable': TenantEnable,
     '/tenant/<tenant_id>/adminlogin': TenantAdminLogin,
-    '/tenant/<tenant_id>/users': TenantUserCreated,
+    '/tenant/<oa_tenant_id>/users': TenantUserCreated,
     '/tenant/<tenant_id>/users/<user_id>': TenantUserRemoved,
 
     '/user': UserList,
-    '/user/<user_id>': User,
-    '/user/<user_id>/login': UserLogin,
+    '/user/<oa_user_service_id>': User,
+    '/user/<oa_user_service_id>/login': UserLogin,
 }
 
 api = Api(api_bp)

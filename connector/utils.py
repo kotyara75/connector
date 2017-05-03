@@ -37,7 +37,7 @@ logger.addHandler(stream)
 
 def log_request(request):
     logger.info({"type": "request",
-                 "app": "fallball_connector",
+                 "app": "box_connector",
                  "method": request.method,
                  "url": request.url,
                  "headers": dict(request.headers),
@@ -46,12 +46,12 @@ def log_request(request):
 
 def log_response(response):
     logger.info({"type": "response",
-                 "app": "fallball_connector",
+                 "app": "box_connector",
                  "status_code": response.status_code,
                  "status": response.status,
                  "headers": dict(response.headers),
                  "data": response.data.decode('utf-8'),
-                 "company": g.company_name})
+                 "company_id": g.enterprise_id})
 
 
 def escape_domain_name(name):
