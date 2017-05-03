@@ -1,1 +1,1 @@
-web: python3 connector/app.py
+web: gunicorn --log-file - connector.app:app
