@@ -111,6 +111,9 @@ class Tenant(ConnectorResource):
                             help='Missing {} limit in request'.format(config.users_resource))
         args = parser.parse_args()
         enterprise_id = g.enterprise_id = get_enterprise_id_for_tenant(tenant_id)
+        if enterprise_id == 'SECOND':
+            return {}
+
         if args.users_limit:
             client = Client(g.reseller, enterprise_id=enterprise_id,
                             users_limit=args.users_limit)
@@ -119,8 +122,9 @@ class Tenant(ConnectorResource):
 
     def delete(self, tenant_id):
         enterprise_id = g.enterprise_id = get_enterprise_id_for_tenant(tenant_id)
-        client = Client(g.reseller, enterprise_id=enterprise_id)
-        client.delete()
+        if enterprise_id != 'SECOND':
+            client = Client(g.reseller, enterprise_id=enterprise_id)
+            client.delete()
         return None, 204
 
 

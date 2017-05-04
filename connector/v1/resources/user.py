@@ -45,7 +45,8 @@ class User(ConnectorResource):
     def delete(self, oa_user_service_id):
         user = make_box_user(oa_user_service_id)
         g.enterprise_id = user.client.enterprise_id
-        user.delete()
+        if user.user_id != 'SECOND':
+            user.delete()
 
         return {}, 204
 
