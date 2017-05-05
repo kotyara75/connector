@@ -21,7 +21,7 @@ class UserSchema(Schema):
     address = fields.Str(allow_none=True)
     timezone = fields.Str(default="Australia/Melbourne")
     status = fields.Str()
-    user_id = fields.Int(load_only=True, load_from='id')
+    user_id = fields.Str(load_only=True, load_from='id')
     enterprise = fields.Nested(EnterpriseSchema, dump_only=True)
 
     def dump_role(self, obj):

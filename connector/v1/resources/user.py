@@ -56,7 +56,6 @@ class User(ConnectorResource):
             logger.info("A crutch for the second subscription support, skipping deletion of fake user")
             return {}, 204
 
-
         # Check that this user is not assigned to the enterprise as admin
         client = Client(g.reseller, enterprise_id=enterprise_id)
         client.refresh()

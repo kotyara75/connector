@@ -7,7 +7,7 @@ class AdministeredBySchema(Schema):
     name = fields.Str(required=True)
     phone = fields.Str(allow_none=True)
     login = fields.Str(required=True)
-    user_id = fields.Integer(load_from='id', load_only=True)
+    user_id = fields.Str(load_from='id', load_only=True)
 
 
 class TrialDealField(fields.Bool):
@@ -33,7 +33,7 @@ class ClientSchema(Schema):
     billing_cycle = fields.Str()
     subdomain = fields.Str(allow_none=True)
     administered_by = fields.Nested(AdministeredBySchema, required=True)
-    enterprise_id = fields.Integer(load_from='id', load_only=True)
+    enterprise_id = fields.Str(load_from='id', load_only=True)
     active_status = fields.Str(allow_none=True)
 
     @post_load
