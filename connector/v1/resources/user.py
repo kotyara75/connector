@@ -51,12 +51,25 @@ class UserList(ConnectorResource):
 class User(ConnectorResource):
     def delete(self, oa_user_service_id):
         user = make_box_user(oa_user_service_id)
-        g.enterprise_id = user.client.enterprise_id
-        if user.user_id != 'SECOND':
-            try:
-                user.delete()
-            except HttpNotFoundError:
-                logger.info("User %s is not found in BOX, skip deletion", user.user_id)
+        enterprise_id = g.enterprise_id = user.client.enterprise_id
+        if user.user_id == 'SECOND':
+            logger.info("A crutch for the second subscription support, skipping deletion of fake user")
+            return {}, 204
+
+
+        # Check that this user is not assigned to the enterprise as admin
+        client = Client(g.reseller, enterprise_id=enterprise_id)
+        client.refresh()
+        if client.administered_by['user_id'] == user.user_id:
+            # this user has been created as part of tenant registration, we can't remove it
+            # TODO: repoint enterprise to another user, for now just skip deletion
+            logger.info("User %s is assigned as the tenant admin, we can't delete it, skipping deletion", user.user_id)
+            return {}, 204
+
+        try:
+            user.delete()
+        except HttpNotFoundError:
+            logger.info("User %s is not found in BOX, skip deletion", user.user_id)
 
         return {}, 204
 
