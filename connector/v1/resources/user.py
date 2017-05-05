@@ -6,8 +6,15 @@ from connector.client.client import Client
 from connector.client.user import User as BoxUser
 from connector.v1.resources.tenant import get_enterprise_id_for_tenant, make_user
 from . import ConnectorResource, OA, parameter_validator
+from slumber.exceptions import HttpNotFoundError
+import logging
+import sys
 
 config = Config()
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.DEBUG)
+stream = logging.StreamHandler(sys.stdout)
+logger.addHandler(stream)
 
 class UserList(ConnectorResource):
     def post(self):
@@ -46,7 +53,10 @@ class User(ConnectorResource):
         user = make_box_user(oa_user_service_id)
         g.enterprise_id = user.client.enterprise_id
         if user.user_id != 'SECOND':
-            user.delete()
+            try:
+                user.delete()
+            except HttpNotFoundError:
+                logger.info("User %s is not found in BOX, skip deletion", user.user_id)
 
         return {}, 204
 
@@ -78,9 +88,8 @@ class UserLogin(ConnectorResource):
 
 def make_box_user(oa_user_service_id):
     oa_user_service = OA.get_resource(oa_user_service_id)
-    oa_user = OA.get_resource(oa_user_service['user']['aps']['id'])
     oa_tenant_id = oa_user_service['tenant']['aps']['id']
     client = Client(reseller=g.reseller, enterprise_id=get_enterprise_id_for_tenant(oa_tenant_id))
-    user = BoxUser(client=client, user_id=oa_user['userId'])
+    user = BoxUser(client=client, user_id=oa_user_service['userId'])
 
     return user
