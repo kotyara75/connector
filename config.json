@@ -1,7 +1,7 @@
 {
     "loglevel": "DEBUG",
     "oauth_key": "cool-sasha-test-app-v1-bae060bdd",
-    "oauth_signature": "0c6c4cf1690c4561a97e4f8f679de90d",
+    "oauth_signature": "ea0f2372179044bfb1a8527cd4aca533",
     "users_resource": "USERS",
     "box_baseurl": "https://api.box.com/2.0/",
     "box_oauth_baseurl": "https://api.box.com/oauth2/",
