@@ -16,7 +16,7 @@ from . import (ConnectorResource, Memoize, OA, OACommunicationException,
 
 
 logger = logging.getLogger(__file__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(Config.loglevel)
 stream = logging.StreamHandler(sys.stdout)
 logger.addHandler(stream)
 
@@ -30,6 +30,7 @@ def get_enterprise_id_for_tenant(tenant_id):
         raise KeyError("tenantId property is missing in OA resource {}".format(tenant_id))
     enterprise_id = tenant_resource['tenantId']
     return None if enterprise_id == 'TBD' else enterprise_id
+
 
 def make_user(client, oa_user):
     email = oa_user['email']
@@ -56,6 +57,17 @@ def make_default_user(client):
     return user
 
 
+def map_tenant_type(limit):
+    if not limit:
+        return None
+    try:
+        plan_code = config.tenant_type_map[limit]
+    except KeyError as e:
+        logger.error("Can't map limit {} to a BOX plan code, no entry in the map, aborting",format(limit))
+
+    return plan_code
+
+
 class TenantList(ConnectorResource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -63,7 +75,13 @@ class TenantList(ConnectorResource):
                             required=True,
                             help='Missing aps.id in request')
         parser.add_argument(config.users_resource, dest='users_limit',
-                            type=parameter_validator('limit'), required=False)
+                            type=parameter_validator('limit'),
+                            required=False,
+                            help='Missing {} limit in request'.format(config.users_resource))
+        parser.add_argument(config.tenant_type_resource, dest='ttype_limit',
+                            type=parameter_validator('limit'),
+                            required=False,
+                            help='Missing {} limit in request'.format(config.tenant_type_resource))
         parser.add_argument('oaSubscription', dest='sub_id', type=parameter_validator('aps', 'id'),
                             required=True,
                             help='Missing link to subscription in request')
@@ -76,8 +94,9 @@ class TenantList(ConnectorResource):
         company_name = OA.get_resource(args.acc_id)['companyName']
         sub_id = OA.get_resource(args.sub_id)['subscriptionId']
         company_name = '{}-sub{}'.format(company_name if company_name else 'Unnamed', sub_id)
+        plan_code = map_tenant_type(args.ttype_limit)
 
-        client = Client(g.reseller, name=company_name, users_limit=args.users_limit)
+        client = Client(g.reseller, name=company_name, users_limit=args.users_limit, plan_code=plan_code)
 
         admins = OA.send_request('GET',
                                  '/aps/2/resources?implementing(http://parallels.com/aps/types/pa/admin-user/1.0)',
@@ -142,14 +161,18 @@ class Tenant(ConnectorResource):
         parser.add_argument(config.users_resource, dest='users_limit',
                             type=parameter_validator('limit'), required=False,
                             help='Missing {} limit in request'.format(config.users_resource))
+        parser.add_argument(config.tenant_type_resource, dest='ttype_limit',
+                            type=parameter_validator('limit'), required=False,
+                            help='Missing {} limit in request'.format(config.tenant_type_resource))
         args = parser.parse_args()
         enterprise_id = g.enterprise_id = get_enterprise_id_for_tenant(tenant_id)
         if enterprise_id == 'SECOND':
             return {}
 
-        if args.users_limit:
+        plan_code = map_tenant_type(args.ttype_limit)
+        if args.users_limit or plan_code:
             client = Client(g.reseller, enterprise_id=enterprise_id,
-                            users_limit=args.users_limit)
+                            users_limit=args.users_limit, plan_code=plan_code)
             client.update()
         return {}
 

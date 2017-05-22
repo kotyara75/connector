@@ -59,7 +59,7 @@ class Client(object):
 
     def __init__(self, reseller=None, name=None, users_amount=None, users_limit=10,
                  trial=None, trial_end_at=None,
-                 plan_code='telstra_business_plus', billing_cycle='monthly',
+                 plan_code=None, billing_cycle='monthly',
                  subdomain=None, administered_by=None, enterprise_id=None, active_status = None):
         self.reseller = reseller
         self.name = name

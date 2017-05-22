@@ -3,6 +3,7 @@
     "oauth_key": "cool-sasha-test-app-v3-54fc91e36",
     "oauth_signature": "d5bfaeae33cc4cdfb51781c61abacc61",
     "users_resource": "USERS",
+    "tenant_type_resource": "_TTYPE",
     "box_baseurl": "https://api.box.com/2.0/",
     "box_oauth_baseurl": "https://api.box.com/oauth2/",
     "box_reseller_client_id": "jpbgzrbh7vr614fea2q8wxzsfd35eyls",
