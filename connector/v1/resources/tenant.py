@@ -85,7 +85,9 @@ class TenantList(ConnectorResource):
         if not admins:
             raise KeyError("No admins in OA account {}".format(args.acc_id))
 
-        user = make_user(client, admins[0])
+        admin_user = admins[0]
+
+        user = make_user(client, admin_user)
 
 #        user = make_default_user(client)
 
@@ -106,6 +108,17 @@ class TenantList(ConnectorResource):
                     client.enterprise_id = 'SECOND'
                 else:
                     raise e
+
+        # link BOX tenant to the user in OA
+        user_type = OA.send_request('GET', '/aps/2/application')['user']['type']
+        OA.send_request('POST', '/aps/2/application/user', body=
+            {
+            'aps': {'type': user_type},
+            'userId': client.administered_by['user_id'],
+            'user': {'aps': {'id': admin_user['aps']['id']}},
+            'tenant': {'aps': {'id': args.aps_id}}
+            },
+            impersonate_as=args.aps_id)
 
         g.enterprise_id = client.enterprise_id
         return {'tenantId': client.enterprise_id}, 201
