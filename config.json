@@ -1,6 +1,6 @@
 {
     "loglevel": "DEBUG",
-    "oauth_key": "cool-sasha-test-app-v3-54fc91e36",
+    "oauth_key": "cool-sasha-test-app-v3-54fc91e37",
     "oauth_signature": "d5bfaeae33cc4cdfb51781c61abacc61",
     "users_resource": "USERS",
     "tenant_type_resource": "_TTYPE",

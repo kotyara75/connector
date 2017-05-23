@@ -133,7 +133,7 @@ class TenantList(ConnectorResource):
         OA.send_request('POST', '/aps/2/application/user', body=
             {
             'aps': {'type': user_type},
-            'userId': client.administered_by['user_id'],
+            'userId': client.administered_by['user_id'] if client.enterprise_id != 'SECOND' else 'SECOND',
             'user': {'aps': {'id': admin_user['aps']['id']}},
             'tenant': {'aps': {'id': args.aps_id}}
             },

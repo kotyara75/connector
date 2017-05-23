@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load, pre_dump
 
-from connector.fbclient import StorageSchema
+from connector.client import StorageSchema
 
 
 class EnterpriseSchema(Schema):
